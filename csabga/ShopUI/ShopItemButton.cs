@@ -33,7 +33,7 @@ namespace csabga.ShopUI
             ChoicesMargin + choiceIndex * (GetChoiceWidth(clientRectangle) + ChoiceSpacing),
             120,
             GetChoiceWidth(clientRectangle),
-            clientRectangle.Height - 120 - ChoicesMargin * 5
+            clientRectangle.Height - 120 - ChoicesMargin * 3
             );
         public bool ContainsPointer(Point mouseLocation, Rectangle clientRectangle) => GetBounds(clientRectangle).Contains(mouseLocation);
 

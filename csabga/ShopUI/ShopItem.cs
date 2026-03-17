@@ -41,6 +41,10 @@ namespace csabga.ShopUI
                     DisplayName = $"Pickup Range Lvl.{level}";
                     Icon = Properties.Resources.PickupRangeIcon;
                     break;
+                case UpgradeType.BulletPiercing:
+                    DisplayName = $"Bullet Piercing Lvl.{level}";
+                    Icon = Properties.Resources.BulletPiercingIcon;
+                    break;
                 case UpgradeType.None:
                     DisplayName = "No upgrades remaining.";
                     Icon = Properties.Resources.NoUpgradeIcon;
@@ -50,7 +54,7 @@ namespace csabga.ShopUI
         public void Purchase()
         {
             if (Type == UpgradeType.None) return;
-            ShopItemPicker.UpgradePool[Type].Current++;
+            ShopItemPicker.UpgradePool[Type].CurrentLevel++;
             if(MainWindow.Instance.Player.Coins < Cost)
             {
                 //throw new Exception("Invalid state exception");
@@ -76,6 +80,9 @@ namespace csabga.ShopUI
                     break;
                 case UpgradeType.PickupRange:
                     MainWindow.Instance.Player.PickupRange *= 1.2f;
+                    break;
+                case UpgradeType.BulletPiercing:
+                    MainWindow.Instance.Player.BulletPiercing++;
                     break;
             }
         }

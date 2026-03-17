@@ -41,8 +41,8 @@ namespace csabga
         {
             double magnitude = Math.Sqrt(X * X + Y * Y);
             if (magnitude == 0) return;
-            X = (X / magnitude);
-            Y = (Y / magnitude);
+            X /= magnitude;
+            Y /= magnitude;
         }
 
         public Vector2 Normalized()

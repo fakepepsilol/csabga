@@ -73,6 +73,16 @@ namespace csabga.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BulletPiercingIcon {
+            get {
+                object obj = ResourceManager.GetObject("BulletPiercingIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap BulletSpeedIcon {
             get {
                 object obj = ResourceManager.GetObject("BulletSpeedIcon", resourceCulture);

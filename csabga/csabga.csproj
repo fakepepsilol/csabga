@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\BulletDamageIcon.png" />
+    <Content Include="Assets\BulletPiercingIcon.png" />
     <Content Include="Assets\BulletSpeedIcon.png" />
     <Content Include="Assets\CloseIcon.png" />
     <Content Include="Assets\CoinIcon.png" />

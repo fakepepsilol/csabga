@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Deployment.Application;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace csabga.ShopUI
 {
     internal static class ShopItemPicker
     {
-        public static readonly Dictionary<UpgradeType, ProgressInt> UpgradePool = new Dictionary<UpgradeType, ProgressInt>
+        public static readonly Dictionary<UpgradeType, UpgradeInfo> UpgradePool = new Dictionary<UpgradeType, UpgradeInfo>
         {
-            { UpgradeType.PlayerSpeed, new ProgressInt(0, 10) },
-            { UpgradeType.BulletDamage, new ProgressInt(0, 10) },
-            { UpgradeType.BulletSpeed, new ProgressInt(0, 10) },
-            { UpgradeType.ShootingSpeed, new ProgressInt(0, 10) },
-            { UpgradeType.WindowSize, new ProgressInt(0, 10) },
-            { UpgradeType.PickupRange, new ProgressInt(0, 10) }
+            { UpgradeType.PlayerSpeed, new UpgradeInfo(0, 10, 1.0f) },
+            { UpgradeType.BulletDamage, new UpgradeInfo(0, 10, 1.0f) },
+            { UpgradeType.BulletSpeed, new UpgradeInfo(0, 10, 1.0f) },
+            { UpgradeType.ShootingSpeed, new UpgradeInfo(0, 10, 1.0f) },
+            { UpgradeType.WindowSize, new UpgradeInfo(0, 10, 1.0f) },
+            { UpgradeType.PickupRange, new UpgradeInfo(0, 10, 1.0f) },
+            { UpgradeType.BulletPiercing, new UpgradeInfo(0, 5, 5.0f) }
         };
         public static ShopItem PickNextItem(Random r, int choiceIndex)
         {
@@ -44,22 +47,26 @@ namespace csabga.ShopUI
                 var upgrade = UpgradePool[type];
                 if (upgrade.IsAvailable)
                 {
-                    var cost = r.Next(upgrade.Current * upgrade.Current + upgrade.Current * 5 + 2, upgrade.Current * upgrade.Current + upgrade.Current * 10 + 10);
-                    return new ShopItem(type, upgrade.Current + 1, cost);
+                    var minCost = upgrade.CurrentLevel * upgrade.CurrentLevel + upgrade.CurrentLevel * 5 + 2;
+                    var maxCost = upgrade.CurrentLevel * upgrade.CurrentLevel + upgrade.CurrentLevel * 10 + 10;
+                    int cost = (int)((r.NextDouble() * (maxCost - minCost) + minCost) * upgrade.PriceFactor);
+                    return new ShopItem(type, upgrade.CurrentLevel + 1, cost);
                 }
             }
         }
     }
 
-    internal class ProgressInt
+    internal class UpgradeInfo
     {
-        public ProgressInt(int current, int limit)
+        public UpgradeInfo(int current, int limit, float priceFactor)
         {
-            Current = current;
-            Limit = limit;
+            CurrentLevel = current;
+            MaxLevel = limit;
+            PriceFactor = priceFactor;
         }
-        public int Current { get; set; }
-        public int Limit { get; set; }
-        public bool IsAvailable => Current < Limit;
+        public int CurrentLevel { get; set; }
+        public int MaxLevel { get; set; }
+        public float PriceFactor { get; set; }
+        public bool IsAvailable => CurrentLevel < MaxLevel;
     }
 }

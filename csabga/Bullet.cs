@@ -15,11 +15,13 @@ namespace csabga
 
         public const int bulletLength = 10;
         public const int bulletWidth = bulletLength / 2;
-        public int Damage { get; set; }
+        public int RemainingDamage { get; set; }
+        public int PiercingLevel { get; set; }
         public double Speed { get; set; }
-        public Bullet(int bulletDamage, double bulletSpeed, Vector2 position, Point clickPosition)
+        public Bullet(int bulletDamage, double bulletSpeed, int maxPierceCount, Vector2 position, Point clickPosition)
         {
-            Damage = bulletDamage;
+            RemainingDamage = bulletDamage;
+            PiercingLevel = maxPierceCount;
             Speed = bulletSpeed;
             this.position = position;
 
@@ -59,6 +61,19 @@ namespace csabga
                 return points;
             }
         }
-        public bool ShouldBeDestroyed() => !position.IsInside(MainWindow.Instance.ScreenBounds);
+        public bool ShouldBeDestroyed() {
+            if(!position.IsInside(MainWindow.Instance.ScreenBounds)) return true;
+            return RemainingDamage <= 0 || previouslyHitEnemies.Count >= PiercingLevel;
+        }
+
+
+        private List<Enemy> previouslyHitEnemies = new List<Enemy>();
+
+        public bool PreviouslyHit(Enemy enemy) => previouslyHitEnemies.Contains(enemy);
+        public void OnHit(Enemy enemy)
+        {
+            RemainingDamage -= (int)((PiercingLevel == 0) ? enemy.Health : RemainingDamage / (PiercingLevel * 0.7));
+            previouslyHitEnemies.Add(enemy);
+        }
     }
 }

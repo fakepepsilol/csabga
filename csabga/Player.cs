@@ -108,6 +108,7 @@ namespace csabga
 
         public double Speed { get; set; } = 250 / MainWindow.TargetFrameTime;
         public int BulletDamage { get; set; } = 1;
+        public int BulletPiercing { get; set; } = 1;
         public double BulletSpeed { get; set; } = 300 / MainWindow.TargetFrameTime;
         public double ShootingSpeed { get; set; } = 50;
         private DateTime lastShootTime = DateTime.Now;
@@ -197,7 +198,7 @@ namespace csabga
         public void FireGun(Point clickPosition)
         {
             if (MainWindow.Instance.ShopOpened) return;
-            MainWindow.Instance.AddRenderable(new Bullet(BulletDamage, BulletSpeed, globalPosition + (new Vector2(clickPosition) - globalPosition).Normalized() * 10, clickPosition));
+            MainWindow.Instance.AddRenderable(new Bullet(BulletDamage, BulletSpeed, BulletPiercing, globalPosition + (new Vector2(clickPosition) - globalPosition).Normalized() * 10, clickPosition));
             lastShootTime = DateTime.Now;
         }
 

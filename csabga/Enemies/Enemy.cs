@@ -16,5 +16,6 @@ namespace csabga
         void OnHit(int damage);
 
         float KillReward { get; }
+        int Health { get; set; }
     }
 }

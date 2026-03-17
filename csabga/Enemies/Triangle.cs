@@ -13,7 +13,7 @@ namespace csabga.Enemies
         private float h = (float)(a * Math.Sqrt(3) / 2);
 
         private double angle = MainWindow.Instance.R.NextDouble() * Math.PI * 2;
-        private int health = 2;
+        public int Health { get; set; } = 2;
         public Vector2 Position { get; set; }
         private double movementSpeed = 50d / MainWindow.TargetFrameTime;
         public Triangle(Vector2 spawnPosition)
@@ -56,7 +56,7 @@ namespace csabga.Enemies
             g.DrawLines(new Pen(Color.LightCoral), points);
         }
 
-        public bool ShouldBeDestroyed() => health <= 0;
+        public bool ShouldBeDestroyed() => Health <= 0;
 
         public bool CollidesWith(Bullet bullet)
         {
@@ -119,7 +119,7 @@ namespace csabga.Enemies
 
         public void OnHit(int damage)
         {
-            health -= damage;
+            Health -= damage;
         }
         public float KillReward => 1;
     }

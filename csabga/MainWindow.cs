@@ -73,7 +73,13 @@ namespace csabga
         {
             if (e.KeyCode == Keys.F1)
             {
-                renderables.RemoveAll(r => r is Enemy);
+                var enemies = renderables.OfType<Enemy>().ToList();
+                foreach (Enemy enemy in enemies)
+                {
+                    enemy.Health = 0;
+                    renderables.Add(new HitMarker(enemy.Position, Color.Red));
+                    renderables.Add(new Coin(enemy.Position, (float)((R.NextDouble() + 1) * enemy.KillReward)));
+                }
             }
             if (e.KeyCode == Keys.F2)
             {
@@ -119,9 +125,9 @@ namespace csabga
                             for (int j = 0; j < enemies.Count; j++)
                             {
                                 var enemy = enemies[j];
-                                if (enemies[j].CollidesWith(bullet))
+                                if (enemy.CollidesWith(bullet) && !bullet.PreviouslyHit(enemy))
                                 {
-                                    enemy.OnHit(bullet.Damage);
+                                    enemy.OnHit(bullet.RemainingDamage);
                                     if (enemy.ShouldBeDestroyed())
                                     {
                                         renderables.Add(new Coin(enemy.Position, (float)((R.NextDouble() + 1) * enemy.KillReward)));
@@ -132,7 +138,7 @@ namespace csabga
                                         renderables.Add(new HitMarker(bullet.position.ToPoint(), Color.White));
                                     }
 
-                                    renderables.RemoveAt(i);
+                                    bullet.OnHit(enemy);
                                     _continue = true;
                                     break;
                                 }

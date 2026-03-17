@@ -14,6 +14,7 @@ namespace csabga.ShopUI
         BulletDamage,
         WindowSize,
         PickupRange,
+        BulletPiercing,
         None
     }
 }

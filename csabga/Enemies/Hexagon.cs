@@ -11,7 +11,7 @@ namespace csabga.Enemies
     internal class Hexagon : Enemy
     {
         public Vector2 Position { get; set; } = Vector2.Zero;
-        private int health = 4;
+        public int Health { get; set; } = 4;
         private double movementSpeed = 30d / MainWindow.TargetFrameTime;
         private int a = 30;
         private double r;
@@ -48,7 +48,7 @@ namespace csabga.Enemies
 
         public void OnHit(int damage)
         {
-            health -= damage;
+            Health -= damage;
         }
 
         private double angle = MainWindow.Instance.R.NextDouble() * Math.PI * 2;
@@ -81,7 +81,7 @@ namespace csabga.Enemies
             g.DrawPolygon(new Pen(Color.Green), newPoints);
         }
 
-        public bool ShouldBeDestroyed() => health <= 0;
+        public bool ShouldBeDestroyed() => Health <= 0;
         public float KillReward => 5;
     }
 }
