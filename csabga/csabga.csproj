@@ -46,34 +46,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bullet.cs" />
-    <Compile Include="Buttons\Button.cs" />
-    <Compile Include="Buttons\ShopButton.cs" />
-    <Compile Include="Coin.cs" />
-    <Compile Include="Enemies\Enemy.cs" />
-    <Compile Include="Enemies\Hexagon.cs" />
-    <Compile Include="Enemies\Triangle.cs" />
-    <Compile Include="EnemySpawner.cs" />
+    <Compile Include="Entities\Bullet.cs" />
+    <Compile Include="UI\Buttons\Button.cs" />
+    <Compile Include="UI\Buttons\ShopButton.cs" />
+    <Compile Include="Entities\Collectables\Coin.cs" />
+    <Compile Include="Entities\Enemies\Enemy.cs" />
+    <Compile Include="Entities\Enemies\Hexagon.cs" />
+    <Compile Include="Entities\Enemies\Triangle.cs" />
+    <Compile Include="Entities\Enemies\EnemySpawner.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="HitMarker.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Entities\Decor\HitMarker.cs" />
+    <Compile Include="Entities\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Renderable.cs" />
-    <Compile Include="Rotator.cs" />
-    <Compile Include="ShopUI\ExitShopButton.cs" />
-    <Compile Include="ShopUI\RerollButton.cs" />
-    <Compile Include="ShopUI\ShopItem.cs" />
-    <Compile Include="ShopUI\ShopItemButton.cs" />
-    <Compile Include="ShopUI\ShopItemPicker.cs" />
-    <Compile Include="ShopUI\ShopTitle.cs" />
-    <Compile Include="ShopUI\UpgradeType.cs" />
-    <Compile Include="Vector2.cs" />
+    <Compile Include="Types\Renderable.cs" />
+    <Compile Include="Entities\Rotator.cs" />
+    <Compile Include="UI\ShopUI\ExitShopButton.cs" />
+    <Compile Include="UI\ShopUI\RerollButton.cs" />
+    <Compile Include="UI\ShopUI\ShopItem.cs" />
+    <Compile Include="UI\ShopUI\ShopItemButton.cs" />
+    <Compile Include="UI\ShopUI\ShopItemPicker.cs" />
+    <Compile Include="UI\ShopUI\ShopTitle.cs" />
+    <Compile Include="UI\ShopUI\UpgradeType.cs" />
+    <Compile Include="Types\Vector2.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -101,20 +101,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\BulletDamageIcon.png" />
-    <Content Include="Assets\BulletPiercingIcon.png" />
-    <Content Include="Assets\BulletSpeedIcon.png" />
-    <Content Include="Assets\CloseIcon.png" />
-    <Content Include="Assets\CoinIcon.png" />
-    <Content Include="Assets\DeathScreen.png" />
-    <Content Include="Assets\HealthIcon.png" />
-    <Content Include="Assets\NoUpgradeIcon.png" />
-    <Content Include="Assets\PickupRangeIcon.png" />
-    <Content Include="Assets\PlayerSpeedIcon.png" />
-    <Content Include="Assets\ShootingSpeedIcon.png" />
-    <Content Include="Assets\ShopIcon.png" />
-    <Content Include="Assets\WindowSizeIcon.png" />
-    <None Include="Resources\CoinIcon.bmp" />
+    <Content Include="UI\Assets\BulletDamageIcon.png" />
+    <Content Include="UI\Assets\BulletPiercingIcon.png" />
+    <Content Include="UI\Assets\BulletSpeedIcon.png" />
+    <Content Include="UI\Assets\CloseIcon.png" />
+    <Content Include="UI\Assets\CoinIcon.png" />
+    <Content Include="UI\Assets\DeathScreen.png" />
+    <Content Include="UI\Assets\HealthIcon.png" />
+    <Content Include="UI\Assets\NoUpgradeIcon.png" />
+    <Content Include="UI\Assets\PickupRangeIcon.png" />
+    <Content Include="UI\Assets\PlayerSpeedIcon.png" />
+    <Content Include="UI\Assets\ShootingSpeedIcon.png" />
+    <Content Include="UI\Assets\ShopIcon.png" />
+    <Content Include="UI\Assets\WindowSizeIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
