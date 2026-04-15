@@ -28,7 +28,7 @@ namespace csabga
                 position += direction * 20;
             }
             position += direction * 20;
-            if (spawnCount % 50 == 0)
+            if (spawnCount != 0 && spawnCount % 75 == 0)
             {
                 MainWindow.Instance.AddRenderable(new Boss(position));
                 spawnCount++;
