@@ -43,7 +43,6 @@ namespace csabga
                 MainWindow.Instance.AddRenderable(new Triangle(position));
             }
             spawnCount++;
-            timer.Interval = Math.Max(200, timer.Interval - 50);
         }
         public static void Reset()
         {

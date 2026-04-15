@@ -90,6 +90,11 @@ namespace csabga
                     enemy.Health = 0;
                     renderables.Add(new HitMarker(enemy.Position, Color.Red));
                     renderables.Add(new HitMarker(Player.Position, Color.Green, 10000, 5000));
+
+                    if (!bossBar.IsVisible)
+                    {
+                        enemySpawnerTimer.Interval = Math.Max(400, enemySpawnerTimer.Interval - 50);
+                    }
                     if (enemy.KillReward > 0)
                     {
                         DropLoot(enemy.Position, enemy.KillReward);
@@ -167,6 +172,10 @@ namespace csabga
                                     enemy.OnHit(bullet.RemainingDamage);
                                     if (enemy.ShouldBeDestroyed())
                                     {
+                                        if(!bossBar.IsVisible)
+                                        {
+                                            enemySpawnerTimer.Interval = Math.Max(400, enemySpawnerTimer.Interval - 50);
+                                        }
                                         if (enemy.KillReward > 0)
                                         {
                                             DropLoot(enemy.Position, enemy.KillReward);

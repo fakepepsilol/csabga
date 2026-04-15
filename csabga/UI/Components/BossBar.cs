@@ -15,7 +15,25 @@ namespace csabga.UI.Components
         public float Value { get; set; } = 100f;
         public Color fillColor = Color.Orange;
 
-        public bool IsVisible { get; set; } = true;
+        private bool isVisible = false;
+        public bool IsVisible
+        {
+            get => isVisible;
+            set
+            {
+                if (isVisible == value) return;
+                if (value)
+                {
+                    MainWindow.Instance.EnemySpawnerTimer.Stop();
+                }
+                else
+                {
+                    MainWindow.Instance.EnemySpawnerTimer.Interval += 1000;
+                    MainWindow.Instance.EnemySpawnerTimer.Start();
+                }
+                isVisible = value;
+            }
+        }
         public bool TextVisible { get; set; } = true;
         public string Text { get; set; } = "Boss";
 
