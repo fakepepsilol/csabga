@@ -11,6 +11,8 @@ namespace csabga
     {
         Point position;
         Color color;
+        int maxR = 50;
+        double growSpeed = 500f / MainWindow.TargetFrameTime;
 
         public HitMarker(Vector2 position)
         {
@@ -21,22 +23,23 @@ namespace csabga
             this.position = position;
             color = Color.White;
         }
-        public HitMarker(Vector2 position, Color color)
+        public HitMarker(Vector2 position, Color color, int maxR = 50, float growSpeed = 500f)
         {
             this.position = position.ToPoint();
             this.color = color;
+            this.maxR = maxR;
+            this.growSpeed = growSpeed / MainWindow.TargetFrameTime;
         }
-        public HitMarker(Point position, Color color)
+        public HitMarker(Point position, Color color, int maxR = 50, float growSpeed = 500f)
         {
             this.position = position;
             this.color = color;
+            this.maxR = maxR;
+            this.growSpeed = growSpeed / MainWindow.TargetFrameTime;
         }
 
 
         int r = 0;
-        const int maxR = 50;
-        double growSpeed = 500f / MainWindow.TargetFrameTime;
-
 
 
         public void Render(Graphics g, Point windowLocation, Rectangle clientRectangle)

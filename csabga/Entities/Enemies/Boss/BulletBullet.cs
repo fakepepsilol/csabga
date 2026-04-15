@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace csabga
 {
-    public class Bullet : Renderable
+    public class BossBullet : Renderable
     {
         public Vector2 position;
         Vector2 direction;
@@ -18,7 +18,7 @@ namespace csabga
         public int RemainingDamage { get; set; }
         public int PiercingLevel { get; set; }
         public double Speed { get; set; }
-        public Bullet(int bulletDamage, double bulletSpeed, int maxPierceCount, Vector2 position, Point clickPosition)
+        public BossBullet(int bulletDamage, double bulletSpeed, int maxPierceCount, Vector2 position, Point clickPosition)
         {
             RemainingDamage = bulletDamage;
             PiercingLevel = maxPierceCount;
@@ -44,7 +44,7 @@ namespace csabga
                 points[i].X -= windowLocation.X;
                 points[i].Y -= windowLocation.Y;
             }
-            g.FillPolygon(MainWindow.Instance.bulletBrush, points);
+            g.FillPolygon(new SolidBrush(Color.IndianRed), points);
         }
         public Point[] Points
         {
@@ -61,19 +61,8 @@ namespace csabga
                 return points;
             }
         }
-        public bool ShouldBeDestroyed() {
-            if(!position.IsInside(MainWindow.Instance.ScreenBounds)) return true;
-            return RemainingDamage <= 0 || previouslyHitEnemies.Count >= PiercingLevel;
-        }
-
-
-        private List<Enemy> previouslyHitEnemies = new List<Enemy>();
-
-        public bool PreviouslyHit(Enemy enemy) => previouslyHitEnemies.Contains(enemy);
-        public void OnHit(Enemy enemy)
-        {
-            RemainingDamage -= (int)((PiercingLevel == 0) ? enemy.Health : RemainingDamage / (PiercingLevel * 0.7));
-            previouslyHitEnemies.Add(enemy);
-        }
+        private bool alreadyHit = false;
+        public bool ShouldBeDestroyed() => alreadyHit || !position.IsInside(MainWindow.Instance.ScreenBounds);
+        public void OnHit() => alreadyHit = true;
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace csabga
 {
-    internal interface Enemy : Renderable
+    public interface Enemy : Renderable
     {
         Vector2 Position { get; }
         bool CollidesWith(Bullet bullet);

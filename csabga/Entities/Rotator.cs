@@ -14,11 +14,12 @@ namespace csabga
             double rad = angle;
             double sin = Math.Sin(rad);
             double cos = Math.Cos(rad);
-            List<Point> ret = new List<Point>(points);
+            List<Point> ret = new List<Point>();
             for (int i = 0; i < points.Count; i++)
             {
                 int x = (int)(cos * (points[i].X - center.X) - sin * (points[i].Y - center.Y) + center.X);
                 int y = (int)(sin * (points[i].X - center.X) + cos * (points[i].Y - center.Y) + center.Y);
+                ret.Add(new Point(x, y));
             }
             return ret;
         }

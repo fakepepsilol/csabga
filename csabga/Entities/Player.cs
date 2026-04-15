@@ -1,4 +1,5 @@
-﻿using System;
+﻿using csabga.UI.DeathScreen;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
@@ -99,7 +100,19 @@ namespace csabga
         public Vector2 Position => globalPosition;
 
         public float Coins { get; set; } = 0;
-        public int Health { get; set; } = 5;
+        private int health = 5;
+        public int Health
+        {
+            get => health;
+            set
+            {
+                if(value <= 0 && health > 0)
+                {
+                    OnDeath();
+                }
+                health = value;
+            }
+        }
         public bool Dead => Health <= 0;
         private DateTime lastHitTime = DateTime.MinValue;
 
@@ -209,11 +222,33 @@ namespace csabga
             int selfR = playerRadius + Coin.Radius / 2;
             return ((globalPosition.X - coin.Position.X) * (globalPosition.X - coin.Position.X) + (globalPosition.Y - coin.Position.Y) * (globalPosition.Y - coin.Position.Y) < selfR * selfR);
         }
+        public bool CollidesWith(HealthPickup pickup)
+        {
+            int selfR = playerRadius - 2;
+            return ((globalPosition.X - pickup.Position.X) * (globalPosition.X - pickup.Position.X) + (globalPosition.Y - pickup.Position.Y) * (globalPosition.Y - pickup.Position.Y) < selfR * selfR);
+        }
 
         public void OnHit()
         {
             Health--;
             lastHitTime = DateTime.Now;
         }
+        private void OnDeath()
+        {
+            MainWindow.Instance.Buttons.Add(new DeathScreen());
+        }
+        public bool CollidesWith(BossBullet bullet)
+        {
+            var bulletPoints = bullet.Points;
+            for (int i = 0; i < 4; i++)
+            {
+                if (PointInside(bulletPoints[i]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private bool PointInside(Point point) => (Math.Pow(Position.X - point.X, 2) + Math.Pow(Position.Y - point.Y, 2)) <= ((playerRadius / 2 + playerBorderWidth) * (playerRadius / 2 + playerBorderWidth));
     }
 }

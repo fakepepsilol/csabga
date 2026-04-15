@@ -11,6 +11,7 @@ namespace csabga
     internal static class EnemySpawner
     {
         private static Timer timer => MainWindow.Instance.EnemySpawnerTimer;
+        private static int spawnCount = 0;
         public static void Start()
         {
             timer.Interval = 3000;
@@ -22,19 +23,31 @@ namespace csabga
             double angle = r.NextDouble() * 2 * Math.PI;
             Vector2 direction = new Vector2(Math.Sin(angle), Math.Cos(angle));
             Vector2 position = MainWindow.Instance.Center;
-            while(position.IsInside(MainWindow.Instance.Bounds))
+            while (position.IsInside(MainWindow.Instance.Bounds))
             {
                 position += direction * 20;
             }
-            position += direction * 40;
-            if(r.Next(0, 20) > 15)
+            position += direction * 20;
+            if (spawnCount % 50 == 0)
+            {
+                MainWindow.Instance.AddRenderable(new Boss(position));
+                spawnCount++;
+                return;
+            }
+            if (r.Next(0, 20) > 15)
             {
                 MainWindow.Instance.AddRenderable(new Hexagon(position));
-            } else
+            }
+            else
             {
                 MainWindow.Instance.AddRenderable(new Triangle(position));
             }
+            spawnCount++;
             timer.Interval = Math.Max(200, timer.Interval - 50);
+        }
+        public static void Reset()
+        {
+            spawnCount = 0;
         }
     }
 }

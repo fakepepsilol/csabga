@@ -1,9 +1,13 @@
 ﻿using csabga.Buttons;
+using csabga.Enemies;
 using csabga.ShopUI;
+using csabga.UI.Components;
+using csabga.UI.DeathScreen;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,13 +18,16 @@ namespace csabga
 {
     public partial class MainWindow : Form
     {
+        public static List<MainWindow> Instances = new List<MainWindow>();
         public MainWindow()
         {
             InitializeComponent();
             DoubleBuffered = true;
-            Instance = this;
+            Instances.Add(this);
+            EnemySpawner.Reset();
+
         }
-        public static MainWindow Instance;
+        public static MainWindow Instance => Instances[Instances.Count - 1];
         public const int TargetFps = 30;
         public const int TargetFrameTime = 1000 / TargetFps;
         public Random R = new Random();
@@ -37,6 +44,8 @@ namespace csabga
         public Rectangle ScreenBounds;
         public Point relativePointerLocation = new Point(0, 0);
         public string SystemFontName => Font.SystemFontName;
+
+        public BossBar bossBar;
         private void MainWindow_Load(object sender, EventArgs e)
         {
             MaximumSize = Size;
@@ -46,6 +55,8 @@ namespace csabga
             bulletBrush = new SolidBrush(Color.White);
             Player = new Player(Location.X + ClientRectangle.Width / 2, Location.Y + ClientRectangle.Height / 2);
             renderables.Add(Player);
+            bossBar = new BossBar();
+            renderables.Add(bossBar);
             Buttons.Add(new ShopButton());
             ShopUi.Add(new ExitShopButton());
             ShopUi.Add(new ShopTitle());
@@ -78,7 +89,15 @@ namespace csabga
                 {
                     enemy.Health = 0;
                     renderables.Add(new HitMarker(enemy.Position, Color.Red));
-                    renderables.Add(new Coin(enemy.Position, (float)((R.NextDouble() + 1) * enemy.KillReward)));
+                    renderables.Add(new HitMarker(Player.Position, Color.Green, 10000, 5000));
+                    if (enemy.KillReward > 0)
+                    {
+                        DropLoot(enemy.Position, enemy.KillReward);
+                    }
+                }
+                foreach (BossBullet bullet in renderables.OfType<BossBullet>().ToList())
+                {
+                    bullet.OnHit();
                 }
             }
             if (e.KeyCode == Keys.F2)
@@ -112,7 +131,25 @@ namespace csabga
             {
                 try
                 {
-                    if (ShopOpened || Player.Dead) return;
+                    if (Player.Dead)
+                    {
+                        foreach (var deathScreen in Buttons.OfType<DeathScreen>())
+                        {
+                            deathScreen.Update();
+                        }
+                        return;
+                    }
+                    if (ShopOpened) return;
+                    if (renderables.OfType<Boss>().Count() > 0)
+                    {
+                        var boss = renderables.OfType<Boss>().First();
+                        bossBar.IsVisible = true;
+                        bossBar.Value = boss.Health;
+                    }
+                    else
+                    {
+                        bossBar.IsVisible = false;
+                    }
                     for (int i = 0; i < renderables.Count; i++)
                     {
                         var renderable = renderables[i];
@@ -130,7 +167,10 @@ namespace csabga
                                     enemy.OnHit(bullet.RemainingDamage);
                                     if (enemy.ShouldBeDestroyed())
                                     {
-                                        renderables.Add(new Coin(enemy.Position, (float)((R.NextDouble() + 1) * enemy.KillReward)));
+                                        if (enemy.KillReward > 0)
+                                        {
+                                            DropLoot(enemy.Position, enemy.KillReward);
+                                        }
                                         renderables.Add(new HitMarker(bullet.position.ToPoint(), Color.Red));
                                     }
                                     else
@@ -144,26 +184,39 @@ namespace csabga
                                 }
                             }
                         }
+                        if (renderable is BossBullet bossBullet)
+                        {
+                            if (Player.CollidesWith(bossBullet))
+                            {
+                                Player.Health--;
+                                bossBullet.OnHit();
+                                renderables.Add(new HitMarker(Player.Position, Color.IndianRed, 100, 800));
+                            }
+                        }
                         if (renderable is Player player)
                         {
-                            var coins = renderables.OfType<Coin>().ToList();
-                            for (int j = 0; j < coins.Count; j++)
+                            for (int j = 0; j < renderables.Count(); j++)
                             {
-                                if (player.CollidesWith(coins[j]))
+                                Renderable entity = renderables[j];
+                                if (entity is Coin coin && player.CollidesWith(coin))
                                 {
-                                    coins[j].OnPickup();
-                                    player.Coins += coins[j].Value;
-                                    renderables.Add(new HitMarker(player.Position, coins[j].Color));
+                                    coin.OnPickup();
+                                    player.Coins += coin.Value;
+                                    renderables.Add(new HitMarker(player.Position, coin.Color));
+                                    continue;
                                 }
-                            }
-                            var enemies = renderables.OfType<Enemy>().ToList();
-                            for (int j = 0; j < enemies.Count; j++)
-                            {
-                                var enemy = enemies[j];
-                                if (enemy.CollidesWith(player))
+                                if(entity is HealthPickup healthPickup && player.CollidesWith(healthPickup))
+                                {
+                                    healthPickup.OnPickup();
+                                    player.Health += healthPickup.Value;
+                                    renderables.Add(new HitMarker(player.Position, Color.FromArgb(0, 255, 0), 9999, 670));
+                                    continue;
+                                }
+                                if(entity is Enemy enemy && enemy.CollidesWith(player))
                                 {
                                     player.externalForce = (player.Position - enemy.Position);
                                     player.OnHit();
+                                    continue;
                                 }
                             }
                         }
@@ -221,12 +274,6 @@ namespace csabga
                 {
                     button.Render(e.Graphics, simulatedWindowLocation, ClientRectangle);
                 }
-
-                if(Player.Dead)
-                {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0x67, 186, 4, 4)), ClientRectangle);
-                    e.Graphics.DrawImage(Properties.Resources.DeathScreen, new Rectangle(ClientRectangle.Width / 2 - Properties.Resources.DeathScreen.Width * 2, ClientRectangle.Height / 2 - Properties.Resources.DeathScreen.Height * 2, Properties.Resources.DeathScreen.Width * 4, Properties.Resources.DeathScreen.Height * 4));
-                }
             }
             finally
             {
@@ -257,22 +304,31 @@ namespace csabga
         }
         private void MainWindow_MouseUp(object sender, MouseEventArgs e)
         {
-            if(Player.Dead) return;
             if (HoveredButton != null)
             {
-                HoveredButton.OnClick(e);
+                if (Player.Dead)
+                {
+                    if (HoveredButton is DeathScreen)
+                    {
+                        HoveredButton.OnClick(e);
+                    }
+                    return;
+                }
+                else
+                {
+                    HoveredButton.OnClick(e);
+                }
             }
             Player.OnMouseUp(e, Location);
         }
         private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
-            if(Player.Dead) return;
-            if (!ShopOpened)
+            if (!ShopOpened && !Player.Dead)
             {
                 relativePointerLocation = new Point(e.X - ClientRectangle.Width / 2, e.Y - ClientRectangle.Height / 2);
             }
             bool anyButtonsHovered = false;
-            foreach (Button button in ShopOpened ? Buttons.Concat(ShopUi.OfType<Button>()).Concat(ShopItems) : Buttons)
+            foreach (Button button in Player.Dead ? Buttons.OfType<DeathScreen>() : (ShopOpened ? Buttons.Concat(ShopUi.OfType<Button>()).Concat(ShopItems) : Buttons))
             {
                 if (button.ContainsPointer(e.Location, ClientRectangle))
                 {
@@ -292,7 +348,10 @@ namespace csabga
             {
                 HoveredButton = null;
             }
-            Player.OnMouseMove(e, Location);
+            if (!Player.Dead)
+            {
+                Player.OnMouseMove(e, Location);
+            }
         }
 
         private void ResizeWindow(Size size)
@@ -349,6 +408,31 @@ namespace csabga
         private void enemySpawnerTimer_Tick(object sender, EventArgs e)
         {
             EnemySpawner.Tick(sender, e);
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (this == Instances[Instances.Count - 1])
+            {
+                foreach (MainWindow instance in Instances)
+                {
+                    if (instance != this)
+                    {
+                        instance.Close();
+                    }
+                }
+            }
+            base.OnClosing(e);
+        }
+        private void DropLoot(Vector2 position, double killReward)
+        {
+            if (R.Next(68) == 67)
+            {
+                renderables.Add(new HealthPickup(position, 1));
+            }
+            else
+            {
+                renderables.Add(new Coin(position, (float)((R.NextDouble() + 1) * killReward)));
+            }
         }
     }
 }
