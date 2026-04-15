@@ -77,6 +77,7 @@ namespace csabga.UI.DeathScreen
             renderables.Add(new Backdrop(Color.FromArgb(0x67, 186, 4, 4)));
             renderables.Add(new ExitButton());
             renderables.Add(new RestartButton());
+            MainWindow.Instance.EnemySpawnerTimer.Stop();
         }
     }
 }

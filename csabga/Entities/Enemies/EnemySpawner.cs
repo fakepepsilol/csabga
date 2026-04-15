@@ -48,6 +48,7 @@ namespace csabga
         public static void Reset()
         {
             spawnCount = 0;
+            MainWindow.Instance.EnemySpawnerTimer.Start();
         }
     }
 }
